@@ -1,0 +1,192 @@
+{% load staticfiles %}
+
+
+<html lang="en">
+<head>
+<!--{% load bootstrap3 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}-->
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+
+        {% endblock %}
+    </title>
+
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="/static/base.css">-->
+     <script type="text/javascript" src="/static/jQuery/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+   <!-- <script type="text/javascript" src="/static/love.js"></script>-->
+
+ {% block header_extends %}{% endblock %}
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{% url 'home' %}">个人博客网站</a>
+                <button class="navbar-toggle collapsed"  data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div id="navbar-collapse" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="{% block nav_home_active %}{% endblock %}">
+                        <a href="{% url 'home' %}">
+                            <span class="glyphicon glyphicon-home"></span>
+                            首页
+                        </a>
+                    </li>
+                    <li class="{% block nav_blog_active %}{% endblock %}">
+                        <a href="{% url 'blog_list' %}">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                            博客
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/product_list">
+                            <span class="glyphicon glyphicon-shopping-cart"></span>产品
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/post_list">
+                            <span class="glyphicon glyphicon-book"></span>
+                            内容</a>
+                    </li>
+                    <li>
+                         <a href="">
+                             欢迎,<span id="localtime" style="font-color:red;"></span>
+                                  <script type="text/javascript">
+                                        function showLocale(objD) {
+                                            var str, colorhead, colorfoot;
+                                            var yy = objD.getYear();
+                                            if (yy < 1900) yy = yy + 1900;
+                                            var MM = objD.getMonth() + 1;
+                                            if (MM < 10) MM = '0' + MM;
+                                            var dd = objD.getDate();
+                                            if (dd < 10) dd = '0' + dd;
+                                            var hh = objD.getHours();
+                                            if (hh < 10) hh = '0' + hh;
+                                            var mm = objD.getMinutes();
+                                            if (mm < 10) mm = '0' + mm;
+                                            var ss = objD.getSeconds();
+                                            if (ss < 10) ss = '0' + ss;
+                                            var ww = objD.getDay();
+                                            if (ww == 0) colorhead = "<font color=\"#FF0000\">";
+                                            if (ww > 0 && ww < 6) colorhead = "<font color=\"#aeaeae\">";
+                                            if (ww == 6) colorhead = "<font color=\"#008000\">";
+                                            if (ww == 0) ww = "星期日";
+                                            if (ww == 1) ww = "星期一";
+                                            if (ww == 2) ww = "星期二";
+                                            if (ww == 3) ww = "星期三";
+                                            if (ww == 4) ww = "星期四";
+                                            if (ww == 5) ww = "星期五";
+                                            if (ww == 6) ww = "星期六";
+                                            colorfoot = "</font>"
+                                            str = colorhead + yy + "-" + MM + "-" + dd + " " + hh + ":" + mm + ":" + ss + "  " + ww + colorfoot;
+                                            return (str);
+                                        }
+                                        function tick() {
+                                            var today;
+                                            today = new Date();
+                                            document.getElementById("localtime").innerHTML = showLocale(today);
+                                            window.setTimeout("tick()", 1000);
+                                        }
+                                        tick();
+                                  </script>
+                         </a>
+
+                    </li>
+                    <li>
+                        <a href="">
+                            <form role="search" method="get" id="searchform"  action="/search/">
+                                <input type="search" name="query" placeholder="搜索" required>
+                                <button type="submit">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </form>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    {% if not user.is_authenticated %}
+                        <li>
+                            <a href="{% url 'login' %}?from={{ request.get_full_path }}">登录</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'register' %}?from={{ request.get_full_path }}">注册</a>
+                        </li>
+
+                        <!--<li>
+                            <a href="{% url 'changepassword' %}?from={{ request.get_full_path }}">修改密码</a>
+                        </li>-->
+                    {% else %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true" aria-expanded="false">
+                                 <span class="glyphicon glyphicon-user"></span>
+                                    {% if user.has_nickname %}
+                                        {{ user.username }}({{ user.get_nickname }})
+                                    {% else %}
+                                        {{ user.username }}
+                                    {% endif %}
+
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'user_info' user.pk %}">个人资料</a></li>
+                                {% if user.username == 'admin' %}
+                                    <li>
+                                        <a href="{% url 'user_manage' %}">用户管理</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'admin:index' %}">后台管理</a>
+                                    </li>
+                                {% endif %}
+                                <li><a href="{% url 'logout' %}?from={{ request.get_full_path }}">退出</a></li>
+                            </ul>
+
+                        </li>
+
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="copyright"  style="color:#555;margin-top:20px;margin-bottom:20px;">
+            <div class="container"style=" width:40%;margin:0 auto;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span>
+                            Copyright ©
+                            <a href="/product_list">中文网</a>
+                        </span>
+                        |
+                        <span>
+                            <a href="https://v3.bootcss.com/">Bootstrap中文网</a>
+                        </span>
+                        <span>
+                            京ICP备11008151号
+                        </span>
+                        |
+                        <span>
+                             京公网安备11010802014853
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% block content %}
+    {% endblock %}
+
+    {% block script_extends %}{% endblock %}
+
+
+</body>
+</html>

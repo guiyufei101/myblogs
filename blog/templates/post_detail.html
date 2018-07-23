@@ -1,0 +1,66 @@
+{% extends 'base.html'%}
+{% load staticfiles %}
+{% load likes_tags %}
+{% block title %}
+    {{ post.title }}
+{% endblock %}
+{% block header_extends %}
+{% load likes_tags %}
+    <link rel="stylesheet" href="/static/blog.css">
+    <link rel="stylesheet" href="/static/datetimepicker/css/bootstrap-datetimepicker.min.css">
+    <script type="text/javascript" src="/static/ckeditor/ckeditor-init.js"></script>
+    <script type="text/javascript" src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="/static/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+{% endblock %}
+{% block content %}
+    <div class="container" style="margin:0 auto;padding-top:70px;">
+        <div class="row">
+            <div class="col-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align:center;">
+                        <h1>
+                            {{ post.title }}
+                        </h1>
+                    </div>
+                    <div class="panel-body">
+                        <p>作者：{{ post.author }}</p>
+                        <p>发布时间：{{ post.publish }}</p>
+                        <p>状态：{{ post.status }}</p>
+                        <div style="text-indent:2em;">
+                            {{ post.body|safe|linebreaks }}
+                        </div>
+                        <div>
+                            评论列表：共（{{ comments.count }}）条评论
+                        </div>
+                        {% if comments %}
+                            {% for comment in comments %}
+                                {{ comment.name }}
+                                {{ comment.email }}
+                                {{ comment.body }}
+                            {% endfor %}
+                        {% else %}
+                            <p>暂无评论👍</p>
+                        {% endif %}
+
+                        {% if new_comment %}
+                            <h2>Your comment has been added.</h2>
+                        {% else %}
+                            <h2>Add a new comment</h2>
+                        <form action="." method="post">
+                            {{ comment_form.as_p }}
+                            {% csrf_token %}
+                            <p>
+                                <input type="submit" value="Add comment">
+                            </p>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html'%}
+{% block title %}
+    {{ blog_type.type_name }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading"style="text-align:center;">
+                    博客列表(一共{{ blogs_count }}篇博客)
+                </div>
+                <div class="panel-body">
+                    <div class="blog">
+                        {% for blog in page_of_blogs %}
+                            <h3>
+                                 <a href="{% url 'blog_detail' blog.pk %}">
+                                    {{ blog.title }}
+                                 </a>
+                            </h3>
+                            <p>作者：{{ blog.author }}</p>
+                            <p>创建时间：{{ blog.created_time }}</p>
+                            <p>{{ blog.content|safe|truncatechars:200 }}</p>
+                        {% empty %}
+                            暂无博客，敬请期待！
+                        {% endfor %}
+                        <!--分页功能实现-->
+                        <div style="text-align:center;">
+                             <ul class="pagination">
+                                    <li>
+                                        {% if page_of_blogs.has_previous %}
+                                           {# 有上一页是链接可点击 #}
+                                            <a href="?page={{ page_of_blogs.previous_page_number }}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        {% else %}
+                                            {# 没有上一页不可点击，把上一页取消 #}
+                                             <!--<span aria-hidden="true">&laquo;</span>-->
+                                        {% endif %}
+                                    </li>
+                                    {# 得到全部页码 #}
+                                    {% for page_num in page_range %}
+                                            {% if page_num == page_of_blogs.number %}
+                                                <li class="active">
+                                                    <a href="?page={{ page_num }}">
+                                                        {{ page_num }}
+                                                    </a>
+                                                </li>
+                                            {% else %}
+                                                {% if page_num == '...' %}
+                                                    <li><span>{{ page_num }}</span></li>
+                                                {% else %}
+                                                    <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                    {% endfor %}
+                                    <!--下一页-->
+                                    <li>
+                                        {% if page_of_blogs.has_next %}
+                                          <a href="?page={{ page_of_blogs.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                          </a>
+                                        {% else %}
+                                            <span aria-hidden="true">&raquo;</span>
+                                        {% endif %}
+                                    </li>
+                                  <!--转到
+
+                                  <input type="text" placeholder="页码" name="zhuan">
+
+                                  <a href="?page=2">确定</a><br>--><br><br>
+                                  一共{{ blogs_count }}篇博客，当前第{{ current_page }}页，一共{{ num_pages}}页。
+                              </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+

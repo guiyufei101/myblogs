@@ -1,0 +1,121 @@
+{% extends 'base.html'%}
+{% load staticfiles %}
+{% load likes_tags %}
+{% block title %}
+    我的博客
+{% endblock %}
+
+{% block content %}
+
+    {% if category %}
+        {{ category.name }}
+    {% else %}
+        Products
+    {% endif %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-2">
+                <ul class="nav navtabs">
+                    <li role="presentation" class="active">
+                        <a href="#">Home</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="/blog">
+                            blog
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="/product_list">
+                            产品
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-8">
+                 <div style="width:980px;height:800px;margin:0 auto;margin-bottom:10px;border:1px dashed;">
+                    {% for product in page_of_products  %}
+                        <div style="width:300px;height:260px;float:left;margin-left:20px;padding-top:5px;">
+                             <a href="{% url 'product_detail' product.pk %}">
+                                <img src="/media/{{ product.image }}" alt="" style="width:300px;">
+                             </a>
+                             <div style="width:300px;text-align:center;">
+                                <a href="{% url 'product_detail' product.pk %}">{{ product.name }}</a>
+                                <p>
+                                    {{ product.price }}
+                                </p>
+                             </div>
+                        </div>
+                    {% endfor %}
+                 </div>
+                 <div style="text-align:center;">
+            <ul class="pagination" >
+                <li>
+                    {% if page_of_products.has_previous %}
+                        <a href="?page={{ page_of_products.previous_page_number }}"aria-label="Previous">
+                             <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    {% else %}
+                         <span aria-hidden="true">&laquo;</span>
+                    {% endif %}
+                </li>
+                {% for page_num in page_range %}
+                    {% if page_num == page_of_products.number %}
+                        <li class="active">
+                            <a href="?page={{ page_num }}">
+                                {{ page_num }}
+                            </a>
+                        </li>
+                    {% else %}
+                        {% if page_num == '...' %}
+                            <li><span>{{ page_num }}</span></li>
+                        {% else %}
+                            <li>
+                                <a href="?page={{ page_num }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                 <li>
+                    {% if page_of_products.has_next %}
+                        <a href="?page={{ page_of_products.next_page_number }}"aria-label="Previous">
+                             <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    {% else %}
+                         <span aria-hidden="true">&raquo;</span>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="copyright"  style="color:#555;margin-top:20px;margin-bottom:20px;">
+            <div class="container"style=" width:40%;margin:0 auto;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span>
+                            Copyright ©
+                            <a href="/product_list">中文网</a>
+                        </span>
+                        |
+                        <span>
+                            <a href="https://v3.bootcss.com/">Bootstrap中文网</a>
+                        </span>
+                        <span>
+                            京ICP备11008151号
+                        </span>
+                        |
+                        <span>
+                             京公网安备11010802014853
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

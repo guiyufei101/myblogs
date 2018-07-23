@@ -1,0 +1,225 @@
+{% extends 'base.html'%}
+{% load staticfiles %}
+{% load likes_tags %}
+{% block title %}
+    我的博客
+{% endblock %}
+
+{% block content %}
+
+    <div class="container" style="margin-top:60px;">
+        <div class="row">
+            <div class="col-sx-12 col-sm-8 col-md-8 col-lg-9">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align:center;">
+                        <h4 style="text-align:center">
+                            博客列表（一共有{{ blogs_count }}篇博客）
+                        </h4>
+                    </div>
+
+                    <div class="panel-body">
+                        <!--<div class="list-group">
+                            <a href="#">
+                                home
+                            </a>
+                            <a href="" class="list-group-item">
+                                实时新闻
+                            </a>
+                            <a href=""class="list-group-item">
+                                电视新闻
+                            </a>
+                        </div>-->
+                            {% for blog in page_of_blogs %}
+                                <div class="blog">
+                                    <h3>
+                                        <a href="{% url 'blog_detail' blog.pk %}">
+                                            {{ blog.title }}
+                                        </a>
+                                    </h3>
+                                    <br>
+                                    <p>
+                                        类型：
+                                        <a href="{% url 'blogs_with_type' blog.type.pk %}">
+                                            {{ blog.type }}
+                                        </a>
+                                    </p>
+                                    <p>
+                                        作者：{{ blog.author }} &nbsp;&nbsp;
+                                        创建时间：{{ blog.created_time }}&nbsp;&nbsp;
+                                        阅读：({{ blog.get_read_num }})
+                                        点赞{% get_like_count blog %}
+                                    </p>
+
+                                    <p>
+                                        {{ blog.content|truncatechars:120 }}<br>
+                                        <a href="{% url 'blog_detail' blog.pk %}" class="btn ">
+                                            查看更多>>
+
+
+                                        </a>
+                                    </p>
+                                </div>
+                            {% empty %}
+                                暂无博客，敬请期待！
+                            {% endfor %}
+                        <div class="" style="text-align:center;">
+                          <ul class="pagination">
+                                <li>
+                                    {% if page_of_blogs.has_previous %}
+                                      {# 有上一页是链接可点击 #}
+                                        <a href="?page={{ page_of_blogs.previous_page_number }}" aria-label="Previous">
+                                         <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    {% else %}
+                                        {# 没有上一页不可点击 #}
+                                         <span aria-hidden="true">&laquo;</span>
+                                    {% endif %}
+                                </li>
+                                {# 得到全部页码 #}
+                                {% for page_num in page_range %}
+                                        {% if page_num == page_of_blogs.number %}
+                                            <li class="active">
+                                                <a href="?page={{ page_num }}">
+                                                    {{ page_num }}
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            {% if page_num == '...' %}
+                                                <li><span>{{ page_num }}</span></li>
+                                            {% else %}
+                                                <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                                            {% endif %}
+                                        {% endif %}
+                                {% endfor %}
+                                <li>
+                                    {% if page_of_blogs.has_next %}
+                                      <a href="?page={{ page_of_blogs.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                      </a>
+                                    {% else %}
+                                        <span aria-hidden="true">&raquo;</span>
+                                    {% endif %}
+                                </li>
+                              <!--转到
+                              <input type="text" placeholder="页码" name="zhuan">
+
+                              <a href="?page=2">确定</a><br>--><br><br>
+                              一共{{ blogs_count }}篇博客，当前第{{ current_page }}页，一共{{ num_pages}}页。
+                          </ul>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden-xs col-sm-4 col-md-4 col-lg-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 style="text-align:center">
+                            博客分类
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul style="list-style-type:none;">
+                            {% for blog_type in blog_types %}
+                                <li>
+                                    <a href="{% url 'blogs_with_type' blog_type.pk %}">
+                                        {{ blog_type.type_name }}({{ blog_type.blogcount }})
+                                    </a>
+                                </li>
+                            {% empty %}
+                                <li>
+                                    暂无分类
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                       <h4 style="text-align:center;">
+                           博客分类(按时间）
+                       </h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul style="list-style-type:none;">
+                            {% for blog_date,blog_count in blog_dates.items %}<!--字典的方法-->
+                                <li>
+                                    <a href="{% url 'blogs_with_date' blog_date.year blog_date.month %}">
+                                        {{ blog_date|date:"Y-m" }}({{blog_count}})
+                                    </a>
+                                </li>
+                            {% empty %}
+                                <li>
+                                    暂无分类
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel panel-default" >
+                        <div class="panel-heading">
+                            <h4 style="text-align:center;">
+                                最近5篇博客(按时间）
+                            </h4>
+                        </div>
+                        <div class="panel-body">
+                            <ul style="list-style-type:none;">
+                               {% for blog in latest_blogs %}
+                                   <li>
+                                       <a href="{% url 'blog_detail' blog.pk %}">
+                                        {{ blog.title }}
+                                    </a>
+                                   </li>
+                               {% endfor %}
+                            </ul>
+                        </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 style="text-align:center;">
+                            评论数排名前5的博客
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul style="list-style-type:none;">
+                            {% for blog in blog_comments %}
+                                <li>
+                                    <a href="">
+                                        {{ blog.title }}({{ blog.readnum.read_num }})
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+</div>
+ <div class="copyright"  style="color:#555;margin-top:20px;margin-bottom:20px;">
+            <div class="container"style=" width:40%;margin:0 auto;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span>
+                            Copyright ©
+                            <a href="/product_list">中文网</a>
+                        </span>
+                        |
+                        <span>
+                            <a href="https://v3.bootcss.com/">Bootstrap中文网</a>
+                        </span>
+                        <span>
+                            京ICP备11008151号
+                        </span>
+                        |
+                        <span>
+                             京公网安备11010802014853
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}
+

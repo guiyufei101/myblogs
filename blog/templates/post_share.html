@@ -1,0 +1,46 @@
+{% extends 'base.html'%}
+{% load staticfiles %}
+{% load likes_tags %}
+{% block title %}
+    {{ post.title }}
+{% endblock %}
+{% block header_extends %}
+{% load likes_tags %}
+    <link rel="stylesheet" href="/static/blog.css">
+    <link rel="stylesheet" href="/static/datetimepicker/css/bootstrap-datetimepicker.min.css">
+    <script type="text/javascript" src="/static/ckeditor/ckeditor-init.js"></script>
+    <script type="text/javascript" src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="/static/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+{% endblock %}
+{% block content %}
+    <div class="container" style="margin:0 auto;padding-top:70px;">
+        <div class="row">
+            <div class="col-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align:center;">
+                        <h1>
+                            {{ post.title }}
+                        </h1>
+                    </div>
+                    <div class="panel-body">
+                        <p>作者：{{ post.author }}</p>
+                        <p>发布时间：{{ post.publish }}</p>
+                        <p>状态：{{ post.status }}</p>
+                        <div style="text-indent:2em;">
+                            {{ post.body|safe|linebreaks }}
+                        </div>
+                        <form action="." method="post">
+                            {{ form.as_p }}
+                            {% csrf_token %}
+                            <input type="submit" value="send email">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}

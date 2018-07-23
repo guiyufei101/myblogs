@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block title %}个人资料{% endblock %}
+<link rel="stylesheet" src="static/bootstrap/css/font-awesome.min.css">
+{% block nav_home_active %}active{% endblock %}
+{% block content %}
+   <div class="containter" style="padding-left:15px;padding-right:15px;backgroud-color:#f7f7f7;">
+        <div class="row">
+            <div class="col-md-4 " style=" margin-left:30px;margin-top:50px;">
+                <div class="card mt-3" style="margin-left:60px;border:1px solid rgba(0,0,0,.125);margin-top:10px;
+                padding-top:10px;margin-bottom:20px;background-color:#fff;">
+                    <div class="card-block" >
+                        <div class="media" style="padding:1.25rem;">
+                            {% if user.user_avatar.avatar %}
+                               <img src="/media/{{ user.user_avatar.avatar }}" width="80" height="80">
+                            {% else %}
+                                <img src="/media/static/media/avatar/default.jpg" alt="" width="80" height="80">
+                            {% endif %}
+                            <div class="media-body" style="width:60%;float:right;">
+                                <div>
+                                    <span class="font-weight-bold">
+                                        {{ user.username }}
+                                    </span>
+                                    <div class="text-muted mt-1">python社区的第{{ user.id }}号会员</div>
+                                    <div class="text-muted">加入于{{ user.date_joined }}</div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr style="width:85%;">
+                        <div class="row"style="padding:1.25rem;">
+                            <div class="col-md-4">
+                                <div class="text-center h1 text-primary">34</div>
+                                <div class="text-center text-muted">帖子</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center h1 text-primary">332</div>
+                                <div class="text-center text-muted">回复</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center h1 text-primary">31</div>
+                                <div class="text-center text-muted">收藏</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3" style="margin-left:60px;border:1px solid rgba(0,0,0,.125);">
+                    <div class="card-block"style="padding:1.25rem;">
+                        <h4 class="card-title font-weight-bold" style="padding:1.25rem;">个人成就</h4>
+                        <div style="padding:1.25rem;">
+                            回复共获得
+                            <span class="text-primary font-weight-bold">28</span>
+                        </div>
+                        <div style="padding:1.25rem;">
+                            帖子共获得
+                            <span class="text-primary font-weight-bold">28</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-7" style="margin-top:60px;margin-left:20px;border:1px solid rgba(0,0,0,.125);">
+                <div class="card mt-3" style="margin-top:10px;padding-top:10px;">
+                    <div class="card-block pb-0">
+                        <ul id="myTab" class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#home" data-toggle="tab">帖子</a>
+                            </li>
+                            <li >
+                                <a href="#blog" data-toggle="tab">博客</a>
+                            </li>
+                            <li >
+                                <a href="#product" data-toggle="tab">产品</a>
+                            </li>
+                            <li>
+                                <a href="#user" data-toggle="tab">用户</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="myTabContent" class="tab-content">
+                        <div class="tab-pane fade in active" id="home">
+                            <ul class="list-group list-group-flush">
+                                {% for blog in blogs %}
+
+                                    <div style="padding:0.5rem;">
+                                            <h4 style="font-color:black;">
+                                                <a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a>
+                                            </h4>
+                                             <p>
+                                                 <a href="{% url 'blogs_with_type' blog.type.pk %}">{{ blog.type }}</a>
+                                                 &nbsp;&nbsp;{{ blog.created_time }}&nbsp;&nbsp;·阅读：({{ blog.get_read_num }})·
+                                             </p>
+                                    </div>
+                                    <hr>
+                                {% empty %}
+                                    <p>
+                                        暂无博客
+                                    </p>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade " id="blog" >
+                            <ul class="list-group list-group-flush">
+                                <a href="/export/">导出用户信息表</a>
+                               <table class="table table-bordered hover" >
+                                   <caption style="text-align:center;">用户列表</caption>
+                                   <thead>
+                                        <tr >
+                                            <th style="text-align:center;">姓名</th>
+                                            <th style="text-align:center;">昵称</th>
+                                            <th style="text-align:center;">邮箱</th>
+                                        </tr>
+
+                                   </thead>
+                                   <tbody>
+                                         {% for user in users %}
+                                            <tr>
+                                                <td style="text-align:center;">{{ user.username }}</td>
+                                                <td style="text-align:center;">{{ user.nickname }}</td>
+                                                <td style="text-align:center;">{{ user.email }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            暂无数据
+                                        {% endfor %}
+                                   </tbody>
+
+                                   </table>
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade" id="product">
+                            <ul class="list-group list-group-flush">
+                                产品
+                                {% for product in products %}
+                                    {{ product.name }}
+                                    {{ product.price }}
+                                {% empty %}
+                                    <p>暂无产品</p>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade" id="user">
+                            <ul class="list-group list-group-flush">
+                                 {% if user.is_authenticated %}
+                                    <h2>{{ user.username }}</h2>
+                                    <ul style="list-style-type:none;font-size:26px;">
+                                         <li>昵称：<!--{{ user.get_nickname }}-->
+                                             {% if user.profile.nickname %}
+                                                {{ user.profile.nickname }}
+                                                <a href="/change_nickname">修改昵称</a>
+                                             {% else %}
+                                                还没有昵称<a href="/edit_nickname">编辑昵称</a>
+                                             {% endif %}
+                                         </li>
+                                            
+                                        <li>
+                                            图片：<img
+                                                {% if  user.user_avatar.avatar %}
+                                                        src="/media/{{ user.user_avatar.avatar }}"
+                                                {% else %}
+                                                    src="/media/static/media/avatar/default.jpg"
+                                                {% endif %}
+                                                    alt="" width="80px"height="80px">
+
+                                        </li>
+                                        <li>
+                                            邮箱：
+                                            {% if user.email %}
+                                                {{ user.email }}
+                                            {% else %}
+                                                未绑定
+                                                <a href="/bind_email">绑定邮箱</a>
+                                            {% endif %}</li>
+                                        <li>
+                                            上一次登录时间：{{ user.last_login|date:"Y-m-d H:i:s" }}
+                                        </li>
+                                        <li>
+                                            <a href="/changepassword/">修改密码</a>
+                                        </li>
+                                    </ul>
+                                 {% else %}
+                                    <span>未登录，跳转到首页...</span>
+                                    <script type="text/javascript">
+                                        window.location.href = '/';
+                                    </script>
+                                 {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    <script>
+                        $(function (){
+                            $('#myTab a:last').tab('show')
+                        })
+                    </script>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

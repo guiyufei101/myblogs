@@ -1,0 +1,38 @@
+{% extends 'base.html'%}
+{% load staticfiles %}
+{% load likes_tags %}
+{% block title %}
+    博客列表
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="panel panel-default" style="margin:0 auto;width:960px;margin-bottom:20px;">
+        <div class="panel-heading" style="text-align:center;">
+            <h2>
+                我的博客   <span style="font-size:18px;">共（{{ posts.count }}） 篇博客</span>
+            </h2>
+        </div>
+        <div class="panel-body">
+            {% for post in posts %}
+                <h2>
+                    <a href="{% url 'post_detail' post.pk %}">
+                        {{ post.title }}
+                    </a>
+                </h2>
+                <p>
+                    作者：{{post.author }}
+                </p>
+                <div style="text-indent:2em;">
+                    {{ post.body|truncatewords:30|linebreaks }}
+                </div>
+                <p>
+                    <a href="{% url 'post_share' post.pk%}">
+                        分享这篇博客
+                    </a>
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

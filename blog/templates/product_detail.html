@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.name }}</title>
+</head>
+<body>
+     <div style="width:80%;height:400px;margin:0 auto;margin-bottom:20px;">
+            <img src="/media/{{ product.image }}" style="width:40%;float:left;height:400px;padding-top:20px;" alt="">
+            <div style="float:right;height:400px;line-height:35px;width:50%;margin-left:2em;padding-top:10px;margin-right:2em;">
+                <h2>
+                    {{ product.name }}
+                </h2>
+                <p>
+                    类别：{{ product.category }}
+                <p>
+                    发布：{{ product.created }}
+                </p>
+                <div>
+                    {{ product.description }}
+                </div>
+                <p>
+                    上一篇：
+                    {% if previous_product %}
+                        <a href="{% url 'product_detail' previous_product.pk %}">
+                            {{ previous_product.name }}
+                        </a>
+                    {% else %}
+                        没有了
+                    {% endif %}
+                </p>
+                <p>
+                    下一篇：
+                    {% if next_product %}
+                         <a href="{% url 'product_detail' next_product.pk %}">
+                            {{ next_product.name }}
+                        </a>
+                    {% else %}
+                        没有了
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+</body>
+</html>
